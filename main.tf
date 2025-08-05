@@ -1,23 +1,20 @@
-module "acme-ec2" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "~> 2.0"
+provider "aws" {
+  region = "us-east-1"
+}
 
-  name = var.name
 
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
 
-  subnet_ids = data.aws_subnet_ids.selected.ids
+resource "aws_instance" "example" {
+  ami                    = data.aws_ami.ubuntu.id
+  subnet_id = "subnet-0e4adba6f0364b18a" # Hardcoded because I don't want to write a data block
+  instance_type          = "t2.micro"
 
-  associate_public_ip_address = true
-
-  tags = {
-    Terraform = "true"
-    Owner     = "acme demo org"
-    Test      = "new taga"
-    Demo      = "May 20"
+    tags = {
+    Name = "FOR VISA ENV DISCOVERY DO NOT TOUCH - KARL"
   }
 }
+
+
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -29,13 +26,3 @@ data "aws_ami" "ubuntu" {
 
   owners = ["099720109477"]
 }
-
-data "aws_vpc" "selected" {
-  id = var.vpc_id
-}
-
-data "aws_subnet_ids" "selected" {
-  vpc_id = data.aws_vpc.selected.id
-}
-
-
